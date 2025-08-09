@@ -1,0 +1,72 @@
+{% extends 'canteen_app/base.html' %} {% block content %}
+<header class="bg-white shadow-sm">
+  <nav class="container mx-auto p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-gray-800">QuickBite</h1>
+    <a
+      href="{% url 'login' %}"
+      class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+      >Login</a
+    >
+  </nav>
+</header>
+<main>
+  <section
+    class="hero bg-indigo-50 flex items-center justify-center p-8 md:p-20 text-center"
+  >
+    <div class="max-w-4xl">
+      <h2
+        class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4"
+      >
+        Skip the Queue, Grab Your Food!
+      </h2>
+      <p class="text-lg text-gray-600 mb-8">
+        Pre-order your favorite meals from the college canteen and pick them up
+        instantly, with no waiting.
+      </p>
+      <a
+        href="{% url 'login' %}"
+        class="px-8 py-3 bg-indigo-600 text-white font-bold rounded-full text-lg shadow-lg hover:bg-indigo-700 transition transform hover:scale-105"
+        >Get Started</a
+      >
+    </div>
+  </section>
+
+  <section class="features py-16 bg-white">
+    <div class="container mx-auto text-center px-4">
+      <h3 class="text-3xl font-bold text-gray-800 mb-12">Why Pre-Order?</h3>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="p-6 rounded-xl shadow-lg bg-gray-50">
+          <div class="text-indigo-600 text-4xl mb-4">🍔</div>
+          <h4 class="text-xl font-semibold mb-2">Quick & Easy Ordering</h4>
+          <p class="text-gray-600">
+            Browse the full menu and place your order in just a few taps.
+          </p>
+        </div>
+        <div class="p-6 rounded-xl shadow-lg bg-gray-50">
+          <div class="text-indigo-600 text-4xl mb-4">⏱️</div>
+          <h4 class="text-xl font-semibold mb-2">No More Queues</h4>
+          <p class="text-gray-600">
+            Avoid the rush and waiting in long lines during peak hours.
+          </p>
+        </div>
+        <div class="p-6 rounded-xl shadow-lg bg-gray-50">
+          <div class="text-indigo-600 text-4xl mb-4">🚀</div>
+          <h4 class="text-xl font-semibold mb-2">Instant Pickup</h4>
+          <p class="text-gray-600">
+            Your food will be ready and waiting for you at the pickup counter.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="bg-gray-800 text-white py-8 mt-12">
+  <div class="container mx-auto text-center">
+    <p>&copy; 2025 College Canteen. All rights reserved.</p>
+    <p class="text-sm mt-2">
+      Contact:
+      <a href="mailto:info@college.edu" class="underline">info@college.edu</a>
+    </p>
+  </div>
+</footer>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'canteen_app/base.html' %} {% block title %}Checkout | Canteen
+{%endblock %} {% block content %}
+<div
+  class="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-8"
+>
+  <div class="max-w-xl w-full bg-white rounded-xl shadow-lg p-8">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Checkout</h2>
+
+    <div class="space-y-4 mb-6">
+      <h3 class="text-xl font-bold border-b pb-2">Order Summary</h3>
+      <div id="checkout-items" class="space-y-3"></div>
+    </div>
+
+    <div
+      class="flex justify-between items-center text-2xl font-bold border-t-2 pt-4 mt-6"
+    >
+      <span>Total:</span>
+      <span id="checkout-total">₹0.00</span>
+    </div>
+
+    <div class="mt-8">
+      <h3 class="text-xl font-bold mb-4">Simulated Payment</h3>
+      <p class="text-gray-600 mb-4">
+        Please note, this is a simulated payment for demo purposes. Click "Place
+        Order" to proceed.
+      </p>
+      <button
+        id="place-order-btn"
+        class="w-full py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition disabled:bg-green-300"
+      >
+        Place Order
+      </button>
+      <a
+        href="{% url 'student_menu' %}"
+        class="mt-4 block text-center text-indigo-600 hover:text-indigo-800"
+      >
+        Cancel and go back to menu
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const placeOrderBtn = document.getElementById('place-order-btn');
+  const checkoutItemsEl = document.getElementById('checkout-items');
+  const checkoutTotalEl = document.getElementById('checkout-total');
+
+  let cart = JSON.parse(localStorage.getItem('canteen_cart')) || {};
+
+  function updateCheckoutUI() {
+      checkoutItemsEl.innerHTML = '';
+      let total = 0;
+      if (Object.keys(cart).length === 0) {
+          checkoutItemsEl.innerHTML = '<p class="text-center text-gray-500">Your cart is empty. Please <a href="{% url 'student_menu' %}" class="text-indigo-600 underline">go back to the menu</a> to add items.</p>';
+          placeOrderBtn.disabled = true;
+      } else {
+          placeOrderBtn.disabled = false;
+          for (const itemId in cart) {
+              const item = cart[itemId];
+              const itemTotal = item.quantity * item.price;
+              total += itemTotal;
+              const itemHtml = `
+                  <div class="flex justify-between items-center p-3 rounded-lg bg-gray-50">
+                      <span class="font-semibold text-gray-700">${item.name} x ${item.quantity}</span>
+                      <span class="font-bold text-gray-900">₹${itemTotal.toFixed(2)}</span>
+                  </div>
+              `;
+              checkoutItemsEl.innerHTML += itemHtml;
+          }
+      }
+      checkoutTotalEl.textContent = `₹${total.toFixed(2)}`;
+  }
+
+  placeOrderBtn.addEventListener('click', async () => {
+      placeOrderBtn.disabled = true;
+      placeOrderBtn.textContent = 'Processing...';
+
+      try {
+          const response = await fetch('{% url "api_create_order" %}', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}',
+              },
+              body: JSON.stringify(cart)
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+              localStorage.removeItem('canteen_cart');
+              window.location.href = `/student/order-confirmation/${data.order_id}/`;
+          } else {
+              alert(`Order failed: ${data.error}`);
+              placeOrderBtn.disabled = false;
+              placeOrderBtn.textContent = 'Place Order';
+          }
+      } catch (error) {
+          console.error('Error:', error);
+          alert('An unexpected error occurred. Please try again.');
+          placeOrderBtn.disabled = false;
+          placeOrderBtn.textContent = 'Place Order';
+      }
+  });
+
+  updateCheckoutUI();
+</script>
+{% endblock %}

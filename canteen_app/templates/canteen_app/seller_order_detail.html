@@ -1,0 +1,100 @@
+{% extends 'canteen_app/base.html' %}
+
+{% block title %}Order #{{ order.order_number }} | Seller{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 p-8">
+    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8">
+        <div class="flex justify-between items-center border-b pb-4 mb-6">
+            <h2 class="text-3xl font-bold text-gray-800">Order Details</h2>
+            <a href="{% url 'seller_dashboard' %}" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition">Back to Dashboard</a>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+                <h3 class="text-xl font-semibold text-gray-700">Order ID: <span class="text-indigo-600">{{ order.order_number }}</span></h3>
+                <p class="text-gray-600 mt-2">Student: {{ order.user.get_full_name|default:order.user.username }} ({{ order.user.roll_number }})</p>
+                <p class="text-gray-600">Placed: {{ order.created_at|date:"F d, Y h:i A" }}</p>
+            </div>
+            <div class="text-left md:text-right">
+                <span class="px-4 py-2 rounded-full text-lg font-bold 
+                    {% if order.status == 'pending' %}bg-yellow-100 text-yellow-800{% endif %}
+                    {% if order.status == 'preparing' %}bg-blue-100 text-blue-800{% endif %}
+                    {% if order.status == 'ready' %}bg-green-100 text-green-800{% endif %}
+                    {% if order.status == 'completed' %}bg-gray-100 text-gray-800{% endif %}">
+                    Status: {{ order.get_status_display }}
+                </span>
+                <p class="text-3xl font-bold text-indigo-600 mt-2">Total: ₹{{ order.total_amount|floatformat:2 }}</p>
+            </div>
+        </div>
+
+        <div class="mt-8 p-6 bg-gray-50 rounded-lg">
+            <h4 class="text-2xl font-bold mb-4">Ordered Items</h4>
+            <ul class="divide-y divide-gray-200">
+                {% for item in order.items.all %}
+                <li class="flex justify-between py-3">
+                    <div>
+                        <span class="text-lg font-semibold text-gray-700">{{ item.menu_item.name }}</span>
+                        <p class="text-sm text-gray-500">₹{{ item.unit_price|floatformat:2 }} per item</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-lg font-medium text-gray-900">x {{ item.quantity }}</span>
+                        <span class="block font-bold text-gray-800">₹{{ item.total_price|floatformat:2 }}</span>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="mt-8">
+            <h4 class="text-2xl font-bold mb-4">Update Status</h4>
+            <div class="flex flex-wrap gap-3">
+                <button class="status-btn px-6 py-3 rounded-lg font-semibold transition" data-status="preparing" 
+                    {% if order.status == 'preparing' or order.status == 'ready' or order.status == 'completed' %}disabled{% endif %} 
+                    {% if order.status != 'pending' %}class="bg-gray-300 text-gray-500 cursor-not-allowed"{% else %}class="bg-blue-500 text-white hover:bg-blue-600"{% endif %}>
+                    Mark as Preparing
+                </button>
+                <button class="status-btn px-6 py-3 rounded-lg font-semibold transition" data-status="ready"
+                    {% if order.status == 'ready' or order.status == 'completed' or order.status == 'pending' %}disabled{% endif %}
+                    {% if order.status != 'preparing' %}class="bg-gray-300 text-gray-500 cursor-not-allowed"{% else %}class="bg-green-500 text-white hover:bg-green-600"{% endif %}>
+                    Mark as Ready
+                </button>
+                <button class="status-btn px-6 py-3 rounded-lg font-semibold transition" data-status="completed"
+                    {% if order.status == 'completed' %}disabled{% endif %}
+                    {% if order.status != 'ready' %}class="bg-gray-300 text-gray-500 cursor-not-allowed"{% else %}class="bg-indigo-500 text-white hover:bg-indigo-600"{% endif %}>
+                    Mark as Completed
+                </button>
+            </div>
+            <p id="status-message" class="mt-4 text-sm text-gray-600"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    document.querySelectorAll('.status-btn').forEach(button => {
+        button.addEventListener('click', async () => {
+            const newStatus = button.dataset.status;
+            try {
+                const response = await fetch(`/api/orders/{{ order.id }}/status/${newStatus}/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert(`Order status updated to ${data.new_status}.`);
+                    window.location.reload();
+                } else {
+                    alert(`Failed to update status: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while updating the status.');
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'canteen_app/base.html' %} {% block title %}Seller
+Dashboard{%endblock %} {% block content %}
+<div class="min-h-screen bg-gray-100 flex flex-col">
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto p-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-gray-800">Seller Dashboard</h1>
+      <div class="flex items-center space-x-4">
+        <a
+          href="{% url 'seller_menu_management' %}"
+          class="text-indigo-600 hover:text-indigo-800 font-semibold"
+          >Manage Menu</a
+        >
+        <a
+          href="{% url 'logout' %}"
+          class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600"
+          >Logout</a
+        >
+      </div>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-8 flex-grow">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">Incoming Orders</h2>
+
+    <nav class="flex space-x-2 border-b-2 border-gray-200 mb-8 overflow-x-auto">
+      <a
+        href="{% url 'seller_dashboard' %}"
+        class="text-lg px-4 py-2 font-semibold {% if not request.GET.status or request.GET.status == 'all' %}text-indigo-600 border-b-2 border-indigo-600{% else %}text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-600{% endif %} whitespace-nowrap"
+        >All</a
+      >
+      <a
+        href="{% url 'seller_dashboard' %}?status=pending"
+        class="text-lg px-4 py-2 font-semibold {% if request.GET.status == 'pending' %}text-indigo-600 border-b-2 border-indigo-600{% else %}text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-600{% endif %} whitespace-nowrap"
+        >Pending</a
+      >
+      <a
+        href="{% url 'seller_dashboard' %}?status=preparing"
+        class="text-lg px-4 py-2 font-semibold {% if request.GET.status == 'preparing' %}text-indigo-600 border-b-2 border-indigo-600{% else %}text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-600{% endif %} whitespace-nowrap"
+        >Preparing</a
+      >
+      <a
+        href="{% url 'seller_dashboard' %}?status=ready"
+        class="text-lg px-4 py-2 font-semibold {% if request.GET.status == 'ready' %}text-indigo-600 border-b-2 border-indigo-600{% else %}text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-600{% endif %} whitespace-nowrap"
+        >Ready</a
+      >
+      <a
+        href="{% url 'seller_dashboard' %}?status=completed"
+        class="text-lg px-4 py-2 font-semibold {% if request.GET.status == 'completed' %}text-indigo-600 border-b-2 border-indigo-600{% else %}text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-600{% endif %} whitespace-nowrap"
+        >Completed</a
+      >
+    </nav>
+
+    <div class="space-y-6">
+      {% for order in orders %}
+      <div
+        class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center"
+      >
+        <div>
+          <h3 class="text-xl font-bold text-gray-800">
+            Order #{{ order.order_number }}
+          </h3>
+          <p class="text-gray-600 mt-1">
+            Student: {{ order.user.get_full_name|default:order.user.username }}
+          </p>
+          <p class="text-sm text-gray-500">
+            Placed: {{ order.created_at|date:"h:i A" }}
+          </p>
+          <ul class="list-disc list-inside mt-2 text-gray-700">
+            {% for item in order.items.all %}
+            <li>{{ item.menu_item.name }} x {{ item.quantity }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="mt-4 md:mt-0 flex items-center space-x-2">
+          <span
+            class="px-3 py-1 rounded-full text-sm font-semibold {% if order.status == 'pending' %}bg-yellow-100 text-yellow-800{% endif %} {% if order.status == 'preparing' %}bg-blue-100 text-blue-800{% endif %} {% if order.status == 'ready' %}bg-green-100 text-green-800{% endif %} {% if order.status == 'completed' %}bg-gray-100 text-gray-800{% endif %}"
+          >
+            {{ order.get_status_display }}
+          </span>
+          <a
+            href="{% url 'seller_order_detail' order.id %}"
+            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+            >View Details</a
+          >
+        </div>
+      </div>
+      {% empty %}
+      <div class="p-6 text-center text-gray-500 bg-white rounded-xl shadow-md">
+        No orders found.
+      </div>
+      {% endfor %}
+    </div>
+  </main>
+</div>
+{% endblock %}

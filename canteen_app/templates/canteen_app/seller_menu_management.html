@@ -1,0 +1,31 @@
+{% extends 'canteen_app/base.html' %} {% block title %}Menu Management
+{%endblock %}{% block content %}
+<div class="min-h-screen bg-gray-100 p-8">
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto p-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-gray-800">Menu Management</h1>
+      <div class="flex items-center space-x-4">
+        <a
+          href="{% url 'seller_dashboard' %}"
+          class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+          >Dashboard</a
+        >
+      </div>
+    </div>
+  </header>
+  <main class="container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">Menu Items</h2>
+    <p class="text-gray-600 mb-6">
+      Menu management for this MVP is handled via the Django Admin Panel. Please
+      use the link below to add, edit, or delete items.
+    </p>
+
+    <a
+      href="/admin/canteen/menuitem/"
+      class="px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition inline-block"
+    >
+      Go to Django Admin Menu Management
+    </a>
+  </main>
+</div>
+{% endblock %}

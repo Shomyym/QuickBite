@@ -1,0 +1,55 @@
+{% extends 'canteen_app/base.html' %} {% block title %}Order History | Canteen
+{%endblock %} {% block content %}
+<div class="min-h-screen bg-gray-100 p-8">
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto p-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-gray-800">My Orders</h1>
+      <a
+        href="{% url 'student_menu' %}"
+        class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+        >Back to Menu</a
+      >
+    </div>
+  </header>
+  <main class="container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">Order History</h2>
+
+    <div class="space-y-6">
+      {% for order in orders %}
+      <div
+        class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center"
+      >
+        <div>
+          <h3 class="text-xl font-bold text-gray-800">
+            Order #{{ order.order_number }}
+          </h3>
+          <p class="text-gray-600 mt-1 text-sm">
+            Placed: {{ order.created_at|date:"F d, Y" }} at {{
+            order.created_at|date:"h:i A" }}
+          </p>
+          <p class="font-bold text-indigo-600 text-2xl mt-2">
+            Total: ₹{{ order.total_amount|floatformat:2 }}
+          </p>
+        </div>
+        <div class="mt-4 md:mt-0 flex items-center space-x-2">
+          <span
+            class="px-3 py-1 rounded-full text-sm font-semibold {% if order.status == 'pending' %}bg-yellow-100 text-yellow-800{% endif %} {% if order.status == 'preparing' %}bg-blue-100 text-blue-800{% endif %} {% if order.status == 'ready' %}bg-green-100 text-green-800{% endif %} {% if order.status == 'completed' %}bg-gray-100 text-gray-800{% endif %}"
+          >
+            {{ order.get_status_display }}
+          </span>
+          <a
+            href="{% url 'order_tracking' order.id %}"
+            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+            >View Details</a
+          >
+        </div>
+      </div>
+      {% empty %}
+      <div class="p-6 text-center text-gray-500 bg-white rounded-xl shadow-md">
+        You have not placed any orders yet.
+      </div>
+      {% endfor %}
+    </div>
+  </main>
+</div>
+{% endblock %}
