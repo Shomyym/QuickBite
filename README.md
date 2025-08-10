@@ -82,6 +82,6 @@ The database has been pre-seeded with sample data to allow for immediate testing
 
 ### **To Test the Application:**
 
-* **Student Flow:** Log in as student1, browse the menu, add items to the cart, and place an order.  
-* **Seller Flow:** Log in as seller1, go to the dashboard, and change the status of the order placed by student1.  
+* **Student Flow:** Log in as shomy, browse the menu, add items to the cart, and place an order.  
+* **Seller Flow:** Log in as staff, go to the dashboard, and change the status of the order placed by student1.  
 * **Admin Flow:** Log in to the Django Admin at http://127.0.0.1:8000/admin/ to manage users and menu items.
