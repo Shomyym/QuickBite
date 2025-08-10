@@ -24,8 +24,8 @@
             Order #{{ order.order_number }}
           </h3>
           <p class="text-gray-600 mt-1 text-sm">
-            Placed: {{ order.created_at|date:"F d, Y" }} at {{
-            order.created_at|date:"h:i A" }}
+            Placed: {{ order.created_at|date:"F d, Y" }} at
+            {{order.created_at|date:"h:i A" }}
           </p>
           <p class="font-bold text-indigo-600 text-2xl mt-2">
             Total: ₹{{ order.total_amount|floatformat:2 }}
