@@ -1,7 +1,11 @@
-{% extends 'canteen_app/base.html' %} {% block content %}
+{% extends 'canteen_app/base.html' %} {% block content %} {% load static %}
 <header class="bg-white shadow-sm">
   <nav class="container mx-auto p-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-gray-800">QuickBite</h1>
+    <div class="flex flex-row-reverse items-center gap-[8px]">
+      <h1 class="text-2xl font-bold text-gray-800">QuickBite</h1>
+      <img src="{% static "canteen_app/images/logoquickbite.jpg" %}"
+      class="w-[54px]" />
+    </div>
     <a
       href="{% url 'login' %}"
       class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
